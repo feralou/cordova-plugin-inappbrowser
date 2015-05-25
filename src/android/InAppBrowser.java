@@ -535,24 +535,28 @@ public class InAppBrowser extends CordovaPlugin {
                 dialog.setInAppBroswer(getInAppBrowser());
 
                 // Main container layout
-                LinearLayout main = new LinearLayout(cordova.getActivity());
-                main.setOrientation(LinearLayout.VERTICAL);
-
+                RelativeLayout main = new RelativeLayout(cordova.getActivity());
+                //main.setOrientation(LinearLayout.VERTICAL);
+                
                 // Toolbar layout
                 RelativeLayout toolbar = new RelativeLayout(cordova.getActivity());
                 //Please, no more black! 
                 toolbar.setBackgroundColor(android.graphics.Color.LTGRAY);
                 toolbar.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44)));
                 toolbar.setPadding(this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2));
-                toolbar.setHorizontalGravity(Gravity.LEFT);
+                toolbar.setHorizontalGravity(Gravity.CENTER_VERTICAL);
                 toolbar.setVerticalGravity(Gravity.TOP);
+                toolbar.setId(1);
 
-                // Action Button Container layout
+
+
+
+               // Action Button Container layout
                 RelativeLayout actionButtonContainer = new RelativeLayout(cordova.getActivity());
                 actionButtonContainer.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                 actionButtonContainer.setHorizontalGravity(Gravity.LEFT);
                 actionButtonContainer.setVerticalGravity(Gravity.CENTER_VERTICAL);
-                actionButtonContainer.setId(1);
+                actionButtonContainer.setId(2);
 
                 // Back button
                 Button back = new Button(cordova.getActivity());
@@ -560,7 +564,7 @@ public class InAppBrowser extends CordovaPlugin {
                 backLayoutParams.addRule(RelativeLayout.ALIGN_LEFT);
                 back.setLayoutParams(backLayoutParams);
                 back.setContentDescription("Back Button");
-                back.setId(2);
+                back.setId(3);
                 Resources activityRes = cordova.getActivity().getResources();
                 int backResId = activityRes.getIdentifier("ic_action_previous_item", "drawable", cordova.getActivity().getPackageName());
                 Drawable backIcon = activityRes.getDrawable(backResId);
@@ -577,14 +581,14 @@ public class InAppBrowser extends CordovaPlugin {
                         goBack();
                     }
                 });
-
+ 
                 // Forward button
                 Button forward = new Button(cordova.getActivity());
                 RelativeLayout.LayoutParams forwardLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                forwardLayoutParams.addRule(RelativeLayout.RIGHT_OF, 2);
+                forwardLayoutParams.addRule(RelativeLayout.RIGHT_OF, back.getId());
                 forward.setLayoutParams(forwardLayoutParams);
                 forward.setContentDescription("Forward Button");
-                forward.setId(3);
+                forward.setId(4);
                 int fwdResId = activityRes.getIdentifier("ic_action_next_item", "drawable", cordova.getActivity().getPackageName());
                 Drawable fwdIcon = activityRes.getDrawable(fwdResId);
                 if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN)
@@ -600,37 +604,13 @@ public class InAppBrowser extends CordovaPlugin {
                         goForward();
                     }
                 });
-
-                // Edit Text Box
-                edittext = new EditText(cordova.getActivity());
-                RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                textLayoutParams.addRule(RelativeLayout.RIGHT_OF, 1);
-                textLayoutParams.addRule(RelativeLayout.LEFT_OF, 5);
-                edittext.setLayoutParams(textLayoutParams);
-                edittext.setId(4);
-                edittext.setSingleLine(true);
-                edittext.setText(url);
-                edittext.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                edittext.setImeOptions(EditorInfo.IME_ACTION_GO);
-                edittext.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
-                edittext.setOnKeyListener(new View.OnKeyListener() {
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        // If the event is a key-down event on the "enter" button
-                        if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                          navigate(edittext.getText().toString());
-                          return true;
-                        }
-                        return false;
-                    }
-                });
-
                 // Close/Done button
                 Button close = new Button(cordova.getActivity());
                 RelativeLayout.LayoutParams closeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
                 closeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 close.setLayoutParams(closeLayoutParams);
                 forward.setContentDescription("Close Button");
-                close.setId(5);
+                close.setId(6);
                 int closeResId = activityRes.getIdentifier("ic_action_remove", "drawable", cordova.getActivity().getPackageName());
                 Drawable closeIcon = activityRes.getDrawable(closeResId);
                 if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN)
@@ -647,10 +627,66 @@ public class InAppBrowser extends CordovaPlugin {
                     }
                 });
 
+                // Edit Text Box
+                edittext = new EditText(cordova.getActivity());
+                RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                textLayoutParams.addRule(RelativeLayout.RIGHT_OF, actionButtonContainer.getId());
+                textLayoutParams.addRule(RelativeLayout.LEFT_OF, close.getId());
+                edittext.setLayoutParams(textLayoutParams);
+                edittext.setId(5);
+                edittext.setSingleLine(true);
+                edittext.setText(url);
+                edittext.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+                edittext.setImeOptions(EditorInfo.IME_ACTION_GO);
+                edittext.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
+                edittext.setFocusable(false);
+                edittext.setOnKeyListener(new View.OnKeyListener() {
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        // If the event is a key-down event on the "enter" button
+                        if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                          navigate(edittext.getText().toString());
+                          return true;
+                        }
+                        return false;
+                    }
+                });
+
+                
+
+
+
+                //BottomToolbar
+                RelativeLayout toolbarsecond = new RelativeLayout(cordova.getActivity());
+                RelativeLayout.LayoutParams toolbarsecondLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,  this.dpToPixels(44));
+                toolbarsecondLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                toolbarsecond.setLayoutParams(toolbarsecondLayoutParams);
+                toolbarsecond.setBackgroundColor(android.graphics.Color.LTGRAY);
+                toolbarsecond.setId(7);
+
+                // Close/Done button
+                Button closesecond = new Button(cordova.getActivity());
+                RelativeLayout.LayoutParams closeSecondLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                closeSecondLayoutParams.addRule(RelativeLayout.ALIGN_LEFT);
+                closesecond.setLayoutParams(closeSecondLayoutParams);
+                closesecond.setContentDescription("Back Button");
+                closesecond.setId(8);
+                closesecond.setText("Volver a resultados");
+                closesecond.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        closeDialog();
+                    }
+                });
+
+                toolbarsecond.addView(closesecond);
+
                 // WebView
                 inAppWebView = new WebView(cordova.getActivity());
-                inAppWebView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+                RelativeLayout.LayoutParams inAppWebViewLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                inAppWebViewLayoutParams.addRule(RelativeLayout.BELOW, toolbar.getId());
+                inAppWebViewLayoutParams.addRule(RelativeLayout.ABOVE, toolbarsecond.getId());
                 inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView));
+                inAppWebView.setLayoutParams(inAppWebViewLayoutParams);
+
                 WebViewClient client = new InAppBrowserClient(thatWebView, edittext);
                 inAppWebView.setWebViewClient(client);
                 WebSettings settings = inAppWebView.getSettings();
@@ -676,11 +712,13 @@ public class InAppBrowser extends CordovaPlugin {
                 }
 
                 inAppWebView.loadUrl(url);
-                inAppWebView.setId(6);
+                inAppWebView.setId(9);
                 inAppWebView.getSettings().setLoadWithOverviewMode(true);
                 inAppWebView.getSettings().setUseWideViewPort(true);
                 inAppWebView.requestFocus();
                 inAppWebView.requestFocusFromTouch();
+
+
 
                 // Add the back and forward buttons to our action button container layout
                 actionButtonContainer.addView(back);
@@ -691,14 +729,18 @@ public class InAppBrowser extends CordovaPlugin {
                 toolbar.addView(edittext);
                 toolbar.addView(close);
 
+
+
+
                 // Don't add the toolbar if its been disabled
                 if (getShowLocationBar()) {
                     // Add our toolbar to our main view/layout
                     main.addView(toolbar);
                 }
-
-                // Add our webview to our main view/layout
+                // // Add our webview to our main view/layout                
+                main.addView(toolbarsecond);
                 main.addView(inAppWebView);
+
 
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(dialog.getWindow().getAttributes());
