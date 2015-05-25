@@ -26,6 +26,7 @@ import android.provider.Browser;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
@@ -541,7 +543,7 @@ public class InAppBrowser extends CordovaPlugin {
                 // Toolbar layout
                 RelativeLayout toolbar = new RelativeLayout(cordova.getActivity());
                 //Please, no more black! 
-                toolbar.setBackgroundColor(android.graphics.Color.LTGRAY);
+                toolbar.setBackgroundColor(android.graphics.Color.parseColor("#00bed5"));
                 toolbar.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44)));
                 toolbar.setPadding(this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2));
                 toolbar.setHorizontalGravity(Gravity.CENTER_VERTICAL);
@@ -628,7 +630,7 @@ public class InAppBrowser extends CordovaPlugin {
                 });
 
                 // Edit Text Box
-                edittext = new EditText(cordova.getActivity());
+                /*edittext = new EditText(cordova.getActivity());
                 RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
                 textLayoutParams.addRule(RelativeLayout.RIGHT_OF, actionButtonContainer.getId());
                 textLayoutParams.addRule(RelativeLayout.LEFT_OF, close.getId());
@@ -636,6 +638,8 @@ public class InAppBrowser extends CordovaPlugin {
                 edittext.setId(5);
                 edittext.setSingleLine(true);
                 edittext.setText(url);
+                edittext.setTextColor(android.graphics.Color.WHITE);
+                edittext.setBackgroundColor(android.graphics.Color.parseColor("#00a7ba"));
                 edittext.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
                 edittext.setImeOptions(EditorInfo.IME_ACTION_GO);
                 edittext.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
@@ -649,7 +653,25 @@ public class InAppBrowser extends CordovaPlugin {
                         }
                         return false;
                     }
-                });
+                });*/
+                GradientDrawable shape =  new GradientDrawable();
+                shape.setCornerRadius( 8 );
+                shape.setColor(android.graphics.Color.parseColor("#00a7ba"));
+
+                 // now find your view and add background to it
+
+                TextView edittext = new TextView(cordova.getActivity());
+                edittext.setText(url);
+                edittext.setId(5);
+                edittext.setPadding(15, 0, 15,0);
+                edittext.setBackground(shape);
+                edittext.setTextColor(android.graphics.Color.WHITE);
+                edittext.setGravity(Gravity.CENTER_VERTICAL);
+                RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                textLayoutParams.setMargins(0,15,0,15);
+                textLayoutParams.addRule(RelativeLayout.RIGHT_OF, actionButtonContainer.getId());
+                textLayoutParams.addRule(RelativeLayout.LEFT_OF, close.getId());
+                edittext.setLayoutParams(textLayoutParams);
 
                 
 
@@ -660,7 +682,7 @@ public class InAppBrowser extends CordovaPlugin {
                 RelativeLayout.LayoutParams toolbarsecondLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,  this.dpToPixels(44));
                 toolbarsecondLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 toolbarsecond.setLayoutParams(toolbarsecondLayoutParams);
-                toolbarsecond.setBackgroundColor(android.graphics.Color.LTGRAY);
+                toolbarsecond.setBackgroundColor(android.graphics.Color.parseColor("#00bed5"));
                 toolbarsecond.setId(7);
 
                 // Close/Done button
@@ -670,7 +692,12 @@ public class InAppBrowser extends CordovaPlugin {
                 closesecond.setLayoutParams(closeSecondLayoutParams);
                 closesecond.setContentDescription("Back Button");
                 closesecond.setId(8);
-                closesecond.setText("Volver a resultados");
+                closesecond.setTextColor(android.graphics.Color.WHITE);
+                closesecond.setPadding(15, 0, 15,0);
+                closesecond.setTextSize(TypedValue.COMPLEX_UNIT_SP,17); 
+                closesecond.setText("< Volver a resultados");
+                closesecond.setBackgroundColor(android.graphics.Color.parseColor("#00bed5"));
+                closesecond.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
                 closesecond.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         closeDialog();
@@ -791,7 +818,7 @@ public class InAppBrowser extends CordovaPlugin {
      * The webview client receives notifications about appView
      */
     public class InAppBrowserClient extends WebViewClient {
-        EditText edittext;
+        TextView edittext;
         CordovaWebView webView;
 
         /**
@@ -800,7 +827,7 @@ public class InAppBrowser extends CordovaPlugin {
          * @param mContext
          * @param edittext
          */
-        public InAppBrowserClient(CordovaWebView webView, EditText mEditText) {
+        public InAppBrowserClient(CordovaWebView webView, TextView mEditText) {
             this.webView = webView;
             this.edittext = mEditText;
         }
